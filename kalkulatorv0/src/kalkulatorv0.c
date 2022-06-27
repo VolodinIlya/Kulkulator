@@ -12,6 +12,7 @@
  */
 #include <stdio.h>
 #include <stdlib.h>
+
 int main(int argc, char *argv[])
 {
 	setvbuf(stdout, NULL, _IONBF, 0);
@@ -22,117 +23,116 @@ int main(int argc, char *argv[])
 	int size;//размер векторов
 	char p,c,v;//p-переменная, с которой работает while, с-переменная, которая хранит знак операции
 	double fact = 1;//переменная, которая хранит значение факториала
-
+    FILE *input, *output;//для ввода-вывода из файла
+    input = fopen("input.txt", "r");
+    output = fopen("output.txt", "w");
 	do//начало цикла while
     {
-		printf("Каким калькулятором вы хотели бы воспользоваться? \n1 - Числовой \n2 - Векторный\n");
-		scanf(" %c", &v);
+		fscanf(input, " %c", &v);
 		switch(v)//switch для выбора работы числового или векторного калькулятора
 		{
-		case '1'://если выбор за числовым калькулятором
-			printf("Калькулятор может выполнять следующие операции: \nСумма:'+' \nРазность:'-' \nПроизведение:'*' \nЧастное:'/' \nФакториал числа:'!' \nВозведение в неотрицательную степень:'^'");
-			printf("\nВведите знак:");
-			scanf(" %c", &c);
+		case 's'://если выбор за числовым калькулятором
+			fscanf(input, " %c", &c);
 			switch (c)//для начала принимает знак
 			{
 			case '+'://алгоритм сложения
-				printf("\nВведите первое число a:");
-				scanf("%lf",&a);
-				printf("Введите второе число b:");
-				scanf("%lf",&b);
-				printf("%lf", a+b);
+				fscanf(input, "%lf",&a);
+				fscanf(input, "%lf",&b);
+				fprintf(output, "%lf+%lf=%lf", a, b, a+b);
 			break;
 			case '-'://алгоритм вычитания
-				printf("\nВведите первое число a:");
-				scanf("%lf",&a);
-				printf("Введите второе число b:");
-				scanf("%lf",&b);
-				printf("%lf", a-b);
+				fscanf(input, "%lf",&a);
+				fscanf(input, "%lf",&b);
+				fprintf(output, "%lf-%lf=%lf", a, b, a-b);
 			break;
 			case '*'://алгоритм умножения
-				printf("\nВведите первое число a:");
-				scanf("%lf",&a);
-				printf("Введите второе число b:");
-				scanf("%lf",&b);
-				printf("%lf", a*b);
+				fscanf(input, "%lf",&a);
+				fscanf(input, "%lf",&b);
+				fprintf(output, "%lf*%lf=%lf", a, b, a*b);
 			break;
 			case '/'://алгоритм деления, с учетом того, что на ноль делить нельзя
-				printf("\nУчтите, что на 0 делить НЕЛЬЗЯ");
-				printf("\nВведите первое число a:");
-				scanf("%lf",&a);
-				printf("Введите второе число b:");
-				scanf("%lf",&b);
-				printf("%lf", a/b);
+				fscanf(input, "%lf",&a);
+				fscanf(input, "%lf",&b);
+				fprintf(output, "%lf/%lf=%lf", a, b, a/b);
 			break;
 			case '!'://алгоритм факториала первого введенного числа, с учетом того что отрицательного факториала не существует
-				printf("Учтите, что факториала отрицательного числа НЕСУЩЕСТВУЕТ");
-				printf("\nВведите число:");
-				scanf("%lf",&a);
+				fscanf(input, "%lf",&a);
 				if (a>0)//для числа>1
 					{
 						for(int i=1; i<=a; i++)
 						{
 							fact=fact*i;
 					    }
-					    printf("%.0lf", fact);
+					    fprintf(output, "%.0lf!", fact);
 					}
-				else printf("1");//для 0
+				else fprintf(output, "1");//для 0
 			break;
 			case '^'://алгоритм возведения числа в степень, с учетом того, что любое число в нулевой степени = 1
-				printf("Учтите, что при возведении любого числа в 0 степень получится 1");
-				printf("\nВведите число a:");
-				scanf("%lf",&a);
-				printf("Введите неотрицательную степень b:");
-				scanf("%lf",&b);
+				fscanf(input, "%lf",&a);
+				fscanf(input, "%lf",&b);
 				for(int i=1; i<=b; i++)//цикл для умножения
 				{
 					b = b - 1;
 					a = a*a;
 				}
-				printf("%lf",a);
+				fprintf(output, "%lf", a);
 			break;
 			}
 		break;
-		case '2'://если выбор зя векторным калькулятором
-			printf("Введите размер векторов: ");//спрашиваем размер вкторов
-		    scanf("%i", &size);
-			printf("Калькулятор может выполнять следующие операции: \nСумма:'+' \nРазность:'-' \nСкалярное произведение:'*'");
-			x=malloc(size*sizeof(int));//выделям место
-			y=malloc(size*sizeof(int));
-			printf("\nВведите знак:");
-			scanf(" %c", &c);
+		case 'v'://если выбор зя векторным калькулятором
+		    fscanf(input, "%i", &size);
+			x=malloc(size*sizeof(double));//выделям место
+			y=malloc(size*sizeof(double));
+			for (int i = 0; i < size; i++) fscanf(input, "%f", &x[i]);
+			for (int i = 0; i < size; i++) fscanf(input, "%f", &y[i]);
+			fscanf(input, " %c", &c);
 			switch(c){//как и с числоывм калькулятором, спрашиваем знак
 			case '+'://алгоритм для сложения
-				printf("\nВведите первый вектор: ");
-				for (int i=0 ;i<size;i++) scanf("%f",&x[i]);
-				printf("\nВведите второй вектор: ");
-				for (int i=0;i<size;i++) scanf("%f",&y[i]);
-				printf("\nРезультат сложения: ");
-				for (int i=0;i<size;i++) printf("%f ",x[i]+y[i]);
+				fprintf(output, "Addition of vectors: ");
+				fprintf(output, "( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", x[i]);
+				fprintf(output, ") ");
+				fprintf(output, "+ ( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", y[i]);
+				fprintf(output, ")");
+				fprintf(output, " = ");
+				fprintf(output, "( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", x[i] + y[i]);
+				fprintf(output, ")");
 			break;
 			case '-'://алгоритм для вычитания
-				printf("\nВведите первый вектор: ");
-				for (int i=0 ;i<size;i++) scanf("%f",&x[i]);
-				printf("\nВведите второй вектор: ");
-				for (int i=0;i<size;i++) scanf("%f",&y[i]);
-				printf("\nРезультат сложения: ");
-				for (int i=0;i<size;i++) printf("%f ",x[i]-y[i]);
+				fprintf(output, "Subtracting vectors: ");
+				fprintf(output, "( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", x[i]);
+				fprintf(output, ") ");
+				fprintf(output, "+ ( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", y[i]);
+				fprintf(output, ")");
+				fprintf(output, " = ");
+				fprintf(output, "( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", x[i] - y[i]);
+				fprintf(output, ")");
 			break;
 			case '*'://алгоритм для скалярного произведения
-				printf("\nВведите первый вектор: ");
-				for (int i=0 ;i<size;i++) scanf("%f",&x[i]);
-				printf("\nВведите второй вектор: ");
-				for (int i=0;i<size;i++) scanf("%f",&y[i]);
-				printf("\nРезультат сложения: ");
-				for (int i=0;i<size;i++) printf("%f ",x[i]*y[i]);
+				fprintf(output, "Multiplication of vectors: ");
+				fprintf(output, "( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", x[i]);
+				fprintf(output, ") ");
+				fprintf(output, "+ ( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", y[i]);
+				fprintf(output, ")");
+				fprintf(output, " = ");
+				fprintf(output, "( ");
+				for (int i = 0; i < size; i++) fprintf(output, "%f ", x[i] * y[i]);
+				fprintf(output, ")");
 			break;
-	 free(x);//освобождаем выделенную память
-	 free(y);
 			}
+			free(x);//освобождаем выделенную память
+			free(y);
 		}
-	printf("\nЗапустить заново (y/n)?");
-	scanf(" %c",&p);
-    }
-	while (p == 'y');//конец цикла. Здесь он предлогает продолжить
-    return 0;
+	fscanf(input, " %c", &p);
+    }while (p == 'y');//конец цикла. Здесь он предлогает продолжить
+	fclose(input);
+	fclose(output);
+	return 0;
 }
